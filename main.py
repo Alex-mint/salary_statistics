@@ -61,21 +61,20 @@ def predict_rub_salary_hh(response):
 
 
 def get_predict_salary(salary_from, salary_to):
-    processed_vacancy = 0
     salary = 0
     if salary_from > 0 and salary_to > 0:
         salary = (salary_from + salary_to) / 2
-        processed_vacancy = 1
     elif salary_from > 0 and salary_to == 0:
         salary = salary_from * 1.2
-        processed_vacancy = 1
     elif salary_from == 0 and salary_to > 0:
         salary = salary_to * 0.8
-        processed_vacancy = 1
     elif salary_from == 0 and salary_to == 0:
         salary = 0
-        processed_vacancy = 0
-    return [salary, processed_vacancy]
+    if salary > 0:
+        processed_vacancies = 1
+    else:
+        processed_vacancies = 0
+    return [salary, processed_vacancies]
 
 
 def get_sj_response(language, sj_api_key):
