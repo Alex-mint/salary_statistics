@@ -125,7 +125,7 @@ def print_table(statistics, name):
     headers = [["Язык программирования", "Вакансий найдено",
                "Вакансий обработано", "Средняя зарплата"]]
     title = f'{name} Moscow'
-    statistics_table = AsciiTable(tuple(headers + statistics), title)
+    statistics_table = AsciiTable(headers + statistics, title)
     print(statistics_table.table)
 
 
