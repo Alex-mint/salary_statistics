@@ -50,9 +50,9 @@ def predict_rub_salary_hh(response):
         if salary and salary["currency"] == "RUR":
             salary_from = salary["from"] if salary["from"] else 0
             salary_to = salary["to"] if salary["to"] else 0
-            predicted_salary += get_predict_salary(salary_from, salary_to)[0]
-            processed_vacancies += \
-            get_predict_salary(salary_from, salary_to)[1]
+            calculated_salary = get_predict_salary(salary_from, salary_to)
+            processed_vacancies += 1 if calculated_salary else 0
+            predicted_salary += calculated_salary
     predicted_salary = int(predicted_salary / processed_vacancies)
     return predicted_salary, processed_vacancies
 
@@ -67,8 +67,7 @@ def get_predict_salary(salary_from, salary_to):
         salary = salary_to * 0.8
     elif not salary_from and not salary_to:
         salary = 0
-    processed_vacancies = 1 if salary else 0
-    return salary, processed_vacancies
+    return salary
 
 
 def get_sj_responses(language, sj_api_key):
@@ -102,15 +101,16 @@ def get_sj_statistics(languages, sj_api_key):
 
 def predict_rub_salary_sj(response):
     processed_vacancies = 0
-    predict_salary = 0
+    predicted_salary = 0
     for vacancy in response["objects"]:
         if vacancy["currency"] == "rub":
             salary_from = vacancy["payment_from"]
             salary_to = vacancy["payment_to"]
-            predict_salary += get_predict_salary(salary_from, salary_to)[0]
-            processed_vacancies += get_predict_salary(salary_from, salary_to)[1]
-    predict_salary = int(predict_salary / processed_vacancies)
-    return predict_salary, processed_vacancies
+            calculated_salary = get_predict_salary(salary_from, salary_to)
+            processed_vacancies += 1 if calculated_salary else 0
+            predicted_salary += calculated_salary
+    predicted_salary = int(predicted_salary / processed_vacancies)
+    return predicted_salary, processed_vacancies
 
 
 def print_table(statistics, name):
