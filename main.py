@@ -44,17 +44,17 @@ def get_hh_statistics(languages):
 
 def predict_rub_salary_hh(response):
     processed_vacancies = 0
-    predict_salary = 0
+    predicted_salary = 0
     for vacancy in response:
         salary = vacancy["salary"]
         if salary and salary["currency"] == "RUR":
             salary_from = salary["from"] if salary["from"] else 0
             salary_to = salary["to"] if salary["to"] else 0
-            predict_salary += get_predict_salary(salary_from, salary_to)[0]
+            predicted_salary += get_predict_salary(salary_from, salary_to)[0]
             processed_vacancies += \
             get_predict_salary(salary_from, salary_to)[1]
-    predict_salary = int(predict_salary / processed_vacancies)
-    return predict_salary, processed_vacancies
+    predicted_salary = int(predicted_salary / processed_vacancies)
+    return predicted_salary, processed_vacancies
 
 
 def get_predict_salary(salary_from, salary_to):
@@ -129,7 +129,7 @@ def main():
     sj_api_key = os.environ['SUPERJOP_API_KEY']
     languages = ["Python", "Java", "Javascript",
                  "Ruby", "PHP", "C++", "C#", "Go"]
-    #get_hh_statistics(languages)
+    get_hh_statistics(languages)
     get_sj_statistics(languages, sj_api_key)
 
 
