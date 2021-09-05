@@ -7,9 +7,9 @@ from terminaltables import AsciiTable
 from dotenv import load_dotenv
 
 
-def get_hh_response(language):
+def get_hh_responses(language):
     url = "https://api.hh.ru/vacancies"
-    pages_response = []
+    page_responses = []
     for page in count(0):
         params = {
             "text": f"NAME:Программист {language}",
@@ -21,20 +21,20 @@ def get_hh_response(language):
         page_response = requests.get(url, params)
         page_response.raise_for_status()
         page_response = page_response.json()
-        pages_response += page_response["items"]
+        page_responses += page_response["items"]
         if page >= page_response['pages'] or page >= 19:
             break
         time.sleep(0.5)
     found_vacancies = page_response["found"]
-    return [pages_response, found_vacancies]
+    return [page_responses, found_vacancies]
 
 
 def get_hh_statistics(languages):
     name = "HeadHunter"
     statistics = {}
     for language in languages:
-        response, found_vacancies = get_hh_response(language)
-        average_salary, processed_vacancies = predict_rub_salary_hh(response)
+        responses, found_vacancies = get_hh_responses(language)
+        average_salary, processed_vacancies = predict_rub_salary_hh(responses)
         statistics[language] = {"found_vacancies": found_vacancies,
                                 "processed_vacancies": processed_vacancies,
                                 "average_salary": average_salary,
@@ -77,7 +77,7 @@ def get_predict_salary(salary_from, salary_to):
     return [salary, processed_vacancies]
 
 
-def get_sj_response(language, sj_api_key):
+def get_sj_responses(language, sj_api_key):
     url = "https://api.superjob.ru/2.0/vacancies"
     headers = {
         "X-Api-App-Id": sj_api_key,
@@ -96,9 +96,9 @@ def get_sj_statistics(languages, sj_api_key):
     name = "SuperJob"
     statistics = {}
     for language in languages:
-        response = get_sj_response(language, sj_api_key)
-        found_vacancies = response["total"]
-        average_salary, processed_vacancies = predict_rub_salary_sj(response)
+        responses = get_sj_responses(language, sj_api_key)
+        found_vacancies = responses["total"]
+        average_salary, processed_vacancies = predict_rub_salary_sj(responses)
         statistics[language] = {"found_vacancies": found_vacancies,
                                 "processed_vacancies": processed_vacancies,
                                 "average_salary": average_salary,
