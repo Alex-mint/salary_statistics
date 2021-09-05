@@ -59,13 +59,13 @@ def predict_rub_salary_hh(response):
 
 def get_predict_salary(salary_from, salary_to):
     salary = 0
-    if salary_from > 0 and salary_to > 0:
+    if salary_from and salary_to:
         salary = (salary_from + salary_to) / 2
-    elif salary_from > 0 and salary_to == 0:
+    elif salary_from and not salary_to:
         salary = salary_from * 1.2
-    elif salary_from == 0 and salary_to > 0:
+    elif not salary_from and salary_to:
         salary = salary_to * 0.8
-    elif salary_from == 0 and salary_to == 0:
+    elif not salary_from and not salary_to:
         salary = 0
     processed_vacancies = 1 if salary else 0
     return salary, processed_vacancies
@@ -104,10 +104,11 @@ def predict_rub_salary_sj(response):
     processed_vacancies = 0
     predict_salary = 0
     for vacancy in response["objects"]:
-        salary_from = vacancy["payment_from"]
-        salary_to = vacancy["payment_to"]
-        predict_salary += get_predict_salary(salary_from, salary_to)[0]
-        processed_vacancies += get_predict_salary(salary_from, salary_to)[1]
+        if vacancy["currency"] == "rub":
+            salary_from = vacancy["payment_from"]
+            salary_to = vacancy["payment_to"]
+            predict_salary += get_predict_salary(salary_from, salary_to)[0]
+            processed_vacancies += get_predict_salary(salary_from, salary_to)[1]
     predict_salary = int(predict_salary / processed_vacancies)
     return predict_salary, processed_vacancies
 
@@ -128,7 +129,7 @@ def main():
     sj_api_key = os.environ['SUPERJOP_API_KEY']
     languages = ["Python", "Java", "Javascript",
                  "Ruby", "PHP", "C++", "C#", "Go"]
-    get_hh_statistics(languages)
+    #get_hh_statistics(languages)
     get_sj_statistics(languages, sj_api_key)
 
 
