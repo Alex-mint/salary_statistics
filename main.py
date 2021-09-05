@@ -26,7 +26,7 @@ def get_hh_responses(language):
             break
         time.sleep(0.5)
     found_vacancies = page_response["found"]
-    return [page_responses, found_vacancies]
+    return page_responses, found_vacancies
 
 
 def get_hh_statistics(languages):
@@ -46,18 +46,15 @@ def predict_rub_salary_hh(response):
     processed_vacancies = 0
     predict_salary = 0
     for vacancy in response:
-        try:
-            salary_from = int(vacancy["salary"]["from"])
-        except:
-            salary_from = 0
-        try:
-            salary_to = int(vacancy["salary"]["to"])
-        except:
-            salary_to = 0
-        predict_salary += get_predict_salary(salary_from, salary_to)[0]
-        processed_vacancies += get_predict_salary(salary_from, salary_to)[1]
+        salary = vacancy["salary"]
+        if salary and salary["currency"] == "RUR":
+            salary_from = salary["from"] if salary["from"] else 0
+            salary_to = salary["to"] if salary["to"] else 0
+            predict_salary += get_predict_salary(salary_from, salary_to)[0]
+            processed_vacancies += \
+            get_predict_salary(salary_from, salary_to)[1]
     predict_salary = int(predict_salary / processed_vacancies)
-    return [predict_salary, processed_vacancies]
+    return predict_salary, processed_vacancies
 
 
 def get_predict_salary(salary_from, salary_to):
@@ -70,11 +67,8 @@ def get_predict_salary(salary_from, salary_to):
         salary = salary_to * 0.8
     elif salary_from == 0 and salary_to == 0:
         salary = 0
-    if salary > 0:
-        processed_vacancies = 1
-    else:
-        processed_vacancies = 0
-    return [salary, processed_vacancies]
+    processed_vacancies = 1 if salary else 0
+    return salary, processed_vacancies
 
 
 def get_sj_responses(language, sj_api_key):
@@ -115,7 +109,7 @@ def predict_rub_salary_sj(response):
         predict_salary += get_predict_salary(salary_from, salary_to)[0]
         processed_vacancies += get_predict_salary(salary_from, salary_to)[1]
     predict_salary = int(predict_salary / processed_vacancies)
-    return [predict_salary, processed_vacancies]
+    return predict_salary, processed_vacancies
 
 
 def print_table(statistics, name):
