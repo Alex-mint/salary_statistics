@@ -22,7 +22,7 @@ def get_hh_responses(language):
         page_response.raise_for_status()
         page_response = page_response.json()
         page_responses += page_response["items"]
-        if page >= page_response['pages'] - 1:
+        if page >= page_response["pages"] - 1:
             break
         time.sleep(0.5)
     found_vacancies = page_response["found"]
@@ -80,11 +80,11 @@ def get_sj_responses(language, sj_api_key):
             "X-Api-App-Id": sj_api_key,
         }
         params = {
-            'town': "Москва",
+            "town": "Москва",
             "page": page_number,
             "count": 100,
-            'period': 30,
-            'keywords': f'Программист {language}'
+            "period": 30,
+            "keywords": f"Программист {language}"
         }
         page_response = requests.get(url, headers=headers, params=params)
         page_response.raise_for_status()
@@ -123,17 +123,6 @@ def predict_rub_salary_sj(response):
     return predicted_salary, processed_vacancies
 
 
-def print_table(statistics, name):
-    statistics = [[key, statistics[key]["found_vacancies"],
-                  statistics[key]["processed_vacancies"],
-                  statistics[key]["average_salary"]] for key in statistics]
-    headers = [["Язык программирования", "Вакансий найдено",
-               "Вакансий обработано", "Средняя зарплата"]]
-    title = f'{name} Moscow'
-    statistics_table = AsciiTable(headers + statistics, title)
-    print(statistics_table.table)
-
-
 def main():
     load_dotenv()
     sj_api_key = os.environ['SUPERJOP_API_KEY']
@@ -150,7 +139,7 @@ def main():
                       statistics]
         headers = [["Язык программирования", "Вакансий найдено",
                     "Вакансий обработано", "Средняя зарплата"]]
-        title = f'{name} Moscow'
+        title = f"{name} Moscow"
         statistics_table = AsciiTable(tuple(headers + statistics), title)
         print(statistics_table.table)
 
