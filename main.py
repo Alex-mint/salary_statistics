@@ -125,8 +125,8 @@ def predict_rub_salary_sj(response):
 
 def print_table(statistics, name):
     statistics = [[key, statistics[key]["found_vacancies"],
-              statistics[key]["processed_vacancies"],
-              statistics[key]["average_salary"]] for key in statistics]
+                  statistics[key]["processed_vacancies"],
+                  statistics[key]["average_salary"]] for key in statistics]
     headers = [["Язык программирования", "Вакансий найдено",
                "Вакансий обработано", "Средняя зарплата"]]
     title = f'{name} Moscow'
