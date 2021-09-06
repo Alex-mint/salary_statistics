@@ -71,26 +71,36 @@ def get_predict_salary(salary_from, salary_to):
 
 
 def get_sj_responses(language, sj_api_key):
-    url = "https://api.superjob.ru/2.0/vacancies"
-    headers = {
-        "X-Api-App-Id": sj_api_key,
-    }
-    params = {
-                'town': "Москва",
-                'period': 30,
-                'keywords': f'Программист {language}'
-            }
-    response = requests.get(url, headers=headers, params=params)
-    response.raise_for_status()
-    return response.json()
+    pages_response = []
+    page_number = 0
+    page = True
+    while page:
+        url = "https://api.superjob.ru/2.0/vacancies"
+        headers = {
+            "X-Api-App-Id": sj_api_key,
+        }
+        params = {
+            'town': "Москва",
+            "page": page_number,
+            "count": 100,
+            'period': 30,
+            'keywords': f'Программист {language}'
+        }
+        page_response = requests.get(url, headers=headers, params=params)
+        page_response.raise_for_status()
+        page_response = page_response.json()
+        page = page_response["more"]
+        page_number += 1
+        pages_response += page_response["objects"]
+    found_vacancies = page_response["total"]
+    return pages_response, found_vacancies
 
 
 def get_sj_statistics(languages, sj_api_key):
     name = "SuperJob"
     statistics = {}
     for language in languages:
-        responses = get_sj_responses(language, sj_api_key)
-        found_vacancies = responses["total"]
+        responses, found_vacancies = get_sj_responses(language, sj_api_key)
         average_salary, processed_vacancies = predict_rub_salary_sj(responses)
         statistics[language] = {"found_vacancies": found_vacancies,
                                 "processed_vacancies": processed_vacancies,
@@ -102,7 +112,7 @@ def get_sj_statistics(languages, sj_api_key):
 def predict_rub_salary_sj(response):
     processed_vacancies = 0
     predicted_salary = 0
-    for vacancy in response["objects"]:
+    for vacancy in response:
         if vacancy["currency"] == "rub":
             salary_from = vacancy["payment_from"]
             salary_to = vacancy["payment_to"]
