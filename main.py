@@ -39,7 +39,7 @@ def get_hh_statistics(languages):
                                 "processed_vacancies": processed_vacancies,
                                 "average_salary": average_salary,
                                 }
-    print_table(statistics, name)
+    return statistics, name
 
 
 def predict_rub_salary_hh(response):
@@ -106,7 +106,7 @@ def get_sj_statistics(languages, sj_api_key):
                                 "processed_vacancies": processed_vacancies,
                                 "average_salary": average_salary,
                                 }
-    print_table(statistics, name)
+    return statistics, name
 
 
 def predict_rub_salary_sj(response):
@@ -139,8 +139,20 @@ def main():
     sj_api_key = os.environ['SUPERJOP_API_KEY']
     languages = ["Python", "Java", "Javascript",
                  "Ruby", "PHP", "C++", "C#", "Go"]
-    get_hh_statistics(languages)
-    get_sj_statistics(languages, sj_api_key)
+    hh_statistics = get_hh_statistics(languages)
+    sj_statistics = get_sj_statistics(languages, sj_api_key)
+    all_statistics = [hh_statistics, sj_statistics]
+    for statistic in all_statistics:
+        statistics, name = statistic
+        statistics = [[key, statistics[key]["found_vacancies"],
+                       statistics[key]["processed_vacancies"],
+                       statistics[key]["average_salary"]] for key in
+                      statistics]
+        headers = [["Язык программирования", "Вакансий найдено",
+                    "Вакансий обработано", "Средняя зарплата"]]
+        title = f'{name} Moscow'
+        statistics_table = AsciiTable(tuple(headers + statistics), title)
+        print(statistics_table.table)
 
 
 if __name__ == "__main__":
