@@ -22,7 +22,7 @@ def get_hh_responses(language):
         page_response.raise_for_status()
         page_response = page_response.json()
         page_responses += page_response["items"]
-        if page >= page_response['pages'] or page >= 19:
+        if page >= page_response['pages'] - 1:
             break
         time.sleep(0.5)
     found_vacancies = page_response["found"]
