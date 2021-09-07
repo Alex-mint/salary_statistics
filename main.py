@@ -131,8 +131,7 @@ def main():
     hh_statistics = get_hh_statistics(languages)
     sj_statistics = get_sj_statistics(languages, sj_api_key)
     all_statistics = [hh_statistics, sj_statistics]
-    for statistic in all_statistics:
-        statistics, name = statistic
+    for statistics, name in all_statistics:
         statistics = [[key, statistics[key]["found_vacancies"],
                        statistics[key]["processed_vacancies"],
                        statistics[key]["average_salary"]] for key in
