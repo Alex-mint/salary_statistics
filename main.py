@@ -50,13 +50,13 @@ def predict_rub_salary_hh(response):
         if salary and salary["currency"] == "RUR":
             salary_from = salary["from"]
             salary_to = salary["to"]
-            calculated_salary = get_predict_salary(salary_from, salary_to)
+            calculated_salary = predict_salary(salary_from, salary_to)
             processed_vacancies += 1 if calculated_salary else 0
             predicted_salary += calculated_salary
     return get_average_salary(predicted_salary, processed_vacancies)
 
 
-def get_predict_salary(salary_from, salary_to):
+def predict_salary(salary_from, salary_to):
     salary = 0
     if salary_from and salary_to:
         salary = (salary_from + salary_to) / 2
@@ -115,7 +115,7 @@ def predict_rub_salary_sj(response):
         if vacancy["currency"] == "rub":
             salary_from = vacancy["payment_from"]
             salary_to = vacancy["payment_to"]
-            calculated_salary = get_predict_salary(salary_from, salary_to)
+            calculated_salary = predict_salary(salary_from, salary_to)
             processed_vacancies += 1 if calculated_salary else 0
             predicted_salary += calculated_salary
     return get_average_salary(predicted_salary, processed_vacancies)
