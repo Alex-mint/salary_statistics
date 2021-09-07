@@ -48,8 +48,8 @@ def predict_rub_salary_hh(response):
     for vacancy in response:
         salary = vacancy["salary"]
         if salary and salary["currency"] == "RUR":
-            salary_from = salary["from"] if salary["from"] else 0
-            salary_to = salary["to"] if salary["to"] else 0
+            salary_from = salary["from"]
+            salary_to = salary["to"]
             calculated_salary = get_predict_salary(salary_from, salary_to)
             processed_vacancies += 1 if calculated_salary else 0
             predicted_salary += calculated_salary
