@@ -129,6 +129,18 @@ def get_average_salary(predicted_salary, processed_vacancies):
     return predicted_salary, processed_vacancies
 
 
+def create_table(statistics, name):
+    statistics = [[key, statistics[key]["found_vacancies"],
+                   statistics[key]["processed_vacancies"],
+                   statistics[key]["average_salary"]] for key in
+                  statistics]
+    headers = [["Язык программирования", "Вакансий найдено",
+                "Вакансий обработано", "Средняя зарплата"]]
+    title = f"{name} Moscow"
+    statistics_table = AsciiTable(headers + statistics, title)
+    return statistics_table.table
+
+
 def main():
     load_dotenv()
     sj_api_key = os.environ['SUPERJOP_API_KEY']
@@ -138,15 +150,8 @@ def main():
     sj_statistics = get_sj_statistics(languages, sj_api_key)
     all_statistics = [hh_statistics, sj_statistics]
     for statistics, name in all_statistics:
-        statistics = [[key, statistics[key]["found_vacancies"],
-                       statistics[key]["processed_vacancies"],
-                       statistics[key]["average_salary"]] for key in
-                      statistics]
-        headers = [["Язык программирования", "Вакансий найдено",
-                    "Вакансий обработано", "Средняя зарплата"]]
-        title = f"{name} Moscow"
-        statistics_table = AsciiTable(headers + statistics, title)
-        print(statistics_table.table)
+        statistics_table = create_table(statistics, name)
+        print(statistics_table)
 
 
 if __name__ == "__main__":
