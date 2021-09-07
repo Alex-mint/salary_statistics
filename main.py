@@ -130,14 +130,15 @@ def get_average_salary(predicted_salary, processed_vacancies):
 
 
 def create_table(statistics, name):
-    statistics = [[key, statistics[key]["found_vacancies"],
-                   statistics[key]["processed_vacancies"],
-                   statistics[key]["average_salary"]] for key in
-                  statistics]
-    headers = [["Язык программирования", "Вакансий найдено",
-                "Вакансий обработано", "Средняя зарплата"]]
+    table_rows = [("Язык программирования", "Вакансий найдено",
+                   "Вакансий обработано", "Средняя зарплата")]
+    for language, language_statistics in statistics.items():
+        vacancies_found, vacancies_processed, average_salary \
+            = language_statistics.values()
+        table_rows.append((language, vacancies_found,
+                           vacancies_processed, average_salary))
     title = f"{name} Moscow"
-    statistics_table = AsciiTable(headers + statistics, title)
+    statistics_table = AsciiTable(table_rows, title)
     return statistics_table.table
 
 
