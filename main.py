@@ -53,7 +53,9 @@ def predict_rub_salary_hh(response):
             calculated_salary = predict_salary(salary_from, salary_to)
             processed_vacancies += 1 if calculated_salary else 0
             predicted_salary += calculated_salary
-    return get_average_salary(predicted_salary, processed_vacancies)
+    predicted_salary = get_average_salary(predicted_salary,
+                                          processed_vacancies)
+    return predicted_salary, processed_vacancies
 
 
 def predict_salary(salary_from, salary_to):
@@ -64,7 +66,7 @@ def predict_salary(salary_from, salary_to):
         salary = salary_from * 1.2
     elif not salary_from and salary_to:
         salary = salary_to * 0.8
-    elif not salary_from and not salary_to:
+    else:
         salary = 0
     return salary
 
@@ -118,15 +120,17 @@ def predict_rub_salary_sj(response):
             calculated_salary = predict_salary(salary_from, salary_to)
             processed_vacancies += 1 if calculated_salary else 0
             predicted_salary += calculated_salary
-    return get_average_salary(predicted_salary, processed_vacancies)
+    predicted_salary = get_average_salary(predicted_salary,
+                                          processed_vacancies)
+    return predicted_salary, processed_vacancies
 
 
 def get_average_salary(predicted_salary, processed_vacancies):
     if processed_vacancies:
         predicted_salary = int(predicted_salary / processed_vacancies)
     else:
-        predicted_salary = "Нет данных"
-    return predicted_salary, processed_vacancies
+        predicted_salary = 0
+    return predicted_salary
 
 
 def create_table(statistics, name):
@@ -144,7 +148,7 @@ def create_table(statistics, name):
 
 def main():
     load_dotenv()
-    sj_api_key = os.environ['SUPERJOP_API_KEY']
+    sj_api_key = os.environ["SUPERJOP_API_KEY"]
     languages = ["Python", "Java", "Javascript",
                  "Ruby", "PHP", "C++", "C#", "Go"]
     hh_statistics = get_hh_statistics(languages)
